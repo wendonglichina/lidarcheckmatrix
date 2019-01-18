@@ -1,0 +1,63 @@
+<launch>
+  <!--read topics from rosbag or subscribe topics-->
+  <arg name="gui" default="false" />
+  <arg name="need_rviz" default="true" doc="rviz显示" />
+  <arg name="lidar_extrinsics" default="lidar_ext.yaml" doc="雷达外参文件名" />
+
+  <arg name="read_rosbag" value="true" doc="是否播放bag文件回放" />
+  <arg name="lidar_topic" default="/velodyne_points" doc="雷达原始数据点云topic名" />
+  <arg name="matrix_topic" default="/matrix_points" doc="matrix目标物点云topic名" />
+  <arg name="marker_topic" default="/MarkerArray" doc="距离标签topic名" />
+  <arg name="round_lab" default="/round_lab_point" doc="标志线点云topic名" />
+  <arg name="rosbag_path" default="/home/bags/lidar3d_loc/map_car/matrix_2019-01-18-16-14-04.bag" doc="rosbag文件路径" />
+  <arg name="camera_yaml" default="camera_point.yaml" doc="rosbag文件路径" />
+  <arg name="velodyne_topic" default="/velodyne_clound" doc="处理后雷达点云topic" />
+  <arg name="matrix_bag" default="true" doc="是否输出matrix点云数据" />
+  <arg name="direction" default="0" doc="摄像头方向" />
+  <arg name="space" default="5" doc="标志线间距" />
+  <arg name="line_width" default="1" doc="标定线间距" />
+
+  <arg name="server_IP" default="192.168.1.11:5560" doc="matrix IP地址" />
+  <arg name="box2d_topic" default="/matrix_box2d" doc="matrix发布车辆2维框topic名" />
+  <arg name="camera_id" default="0" doc="摄像头编号" />
+
+  <arg name="lidar_launch" default="VLP16_points.launch" doc="雷达启动launch" />
+
+	<param name="robot_description" textfile="$(find lidardate)/rviz/car_display.urdf" />
+	<param name="use_gui" value="$(arg gui)"/>
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+
+  <group if="$(arg read_rosbag)">
+    <param name="use_sim_time" value="false" />
+  </group>
+
+  <group unless="$(arg read_rosbag)">
+    <param name="use_sim_time" value="false" />
+    <node pkg="matrixObstacle" type="pub_matrixobs" name="pub_matrixobs" output="screen" respawn="false" required="true">
+      <param name="matrix_topic" value="$(arg matrix_topic)" />
+      <param name="box2d_topic" value="$(arg box2d_topic)" />
+      <param name="camera_id" value="$(arg camera_id)" />
+    </node>
+    <include file="$(find velodyne_pointcloud)/launch/$(arg lidar_launch)"/>
+  </group>
+
+   <node name="pub_static_tf" type="pub_static_tf.py" pkg="param" output="log" respawn="true">
+    <param name="extf" value="$(find lidardate)/yaml/$(arg lidar_extrinsics)" />
+  </node>
+  <node pkg="lidardate" type="pub_lidartp" name="pub_lidartp" output="screen" respawn="false" required="true">
+    <param name="lidar_topic" value="$(arg lidar_topic)" />
+    <param name="matrix_topic" value="$(arg matrix_topic)" />
+    <param name="velodyne_topic" value="$(arg velodyne_topic)" />
+    <param name="matrix_bag" value="$(arg matrix_bag)" />
+    <param name="read_rosbag" value="$(arg read_rosbag)" />
+    <param name="rosbag_path" value="$(arg rosbag_path)" />
+    <param name="camera_yaml_path" value="$(find lidardate)/yaml/$(arg camera_yaml)" />
+    <param name="direction" value="$(arg direction)" />
+    <param name="space" value="$(arg space)" />
+  </node>
+  <group if="$(arg need_rviz)">
+    <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find lidardate)/rviz/rviz.rviz" respawn="false" />
+  </group>
+
+</launch>

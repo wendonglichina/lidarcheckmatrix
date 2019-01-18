@@ -1,0 +1,161 @@
+// See README.txt for information and build instructions.
+//
+// Note: START and END tags are used in comments to define sections used in
+// tutorials.  They are not part of the syntax for Protocol Buffers.
+//
+// To get an in-depth walkthrough of this file and the related examples, see:
+// https://developers.google.com/protocol-buffers/docs/tutorials
+
+// [START declaration]
+syntax = "proto2";
+package FrameV0Proto;
+// [END declaration]
+
+import "common.proto";
+import "can.proto";
+import "sensor.proto";
+import "warning.proto";
+
+// [START messages]
+
+enum VehicleType {
+  VEHICLE_TYPE_NONE = 0;
+  VEHICLE_TYPE_REAR = 1;
+  VEHICLE_TYPE_SIDE = 2;
+}
+
+// Vehicle result for each Image Frame
+message ObstacleResult {
+  required int32 id = 1;
+  optional int32 life_time = 2;
+  optional int32 age = 3;
+  // rect_sta is a smoothed rect position in image space
+  required CommonProto.Rect rect_sta = 4;
+  // rect_obs is actual detected/tracked rect position in image space
+  required CommonProto.Rect rect_obs = 5;
+  optional float conf = 6;
+  optional float acc_conf = 7;
+  optional float ttc = 8;
+  optional float hmw = 9;
+  optional int32 type = 10;
+  optional bool in_path = 11;
+  optional float distance = 12;
+  optional float vx = 13;
+  optional float vy = 14;
+}
+
+message Box3DResult {
+  required int32 id = 1;
+  required CommonProto.Box3D box = 2;
+}
+
+enum FrameSource {
+  FrameSource_FPGA = 0;
+  FrameSource_SOC = 1;
+}
+
+message SerializedData {
+  required string proto_name = 1;
+  optional string proto_hex_string = 2;
+}
+
+message Frame {
+  optional int32 version = 1;
+  optional int32 frame_id = 2;
+  optional CommonProto.CameraMatrix camera = 3;
+  optional CommonProto.Image img_frame = 4;
+  optional CANProto.CANFrame can_frames = 5;
+  repeated ObstacleResult vehiles = 6;
+  repeated CommonProto.Line lanes = 7;
+  optional WarningProto.FCW fcw = 8;
+  optional WarningProto.LDW ldw = 9;
+  repeated CANProto.CANFrameRaw can_frames_raw = 10;
+  optional SensorProto.IMUFrame imu_frame = 11;      // processed IMU information
+  repeated SensorProto.IMUFrame imu_frames_raw = 12; // raw IMU information
+  optional SensorProto.GPSFrame gps_frame = 13;
+  repeated SensorProto.GPSFrameRaw gps_frames_raw = 14;
+  repeated CommonProto.FreeSpaceResult freespace = 15;
+  optional FrameSource source = 16;
+  optional CommonProto.MotionFrame motion_frame = 17;     // vehicle motion
+  optional CommonProto.CameraParam camera_param = 18;
+  repeated ObstacleResult pedestrians = 19;
+
+  // raw perception results
+  repeated CommonProto.ObstacleRaw vehicle_raw = 20;  // Deprecated
+  repeated CommonProto.ObstacleRaw lane_raw = 21;  // Deprecated
+  repeated CommonProto.ObstacleRaw pedestrians_raw = 22;  // Deprecated
+
+  optional WarningProto.WarningResult warning_result = 23;
+  
+  optional CommonProto.OdometryFrame odometry = 24;
+  
+  optional CommonProto.CameraParam camera_param_default = 25;
+  
+  optional SensorProto.IMUFrame imu_offset = 26;
+  
+  repeated CommonProto.ObstacleRaw obj_raw = 27;
+  repeated ObstacleResult traffic_signs = 28;
+  repeated ObstacleResult traffic_lights = 29;
+  repeated int32 traffic_sign_types = 30;
+
+  optional CommonProto.Image parsing_frame = 31;
+  optional CommonProto.Image depth_frame = 32;
+
+  repeated Box3DResult boxes_3d = 33;
+  repeated CommonProto.Skeleton skeletons = 34;
+  repeated CommonProto.Box3DRaw boxes_3d_raw = 35;
+  repeated CommonProto.SkeletonRaw skeletons_raw = 36;
+  
+  optional CommonProto.HighwayLocate highway_locate = 37;
+  
+  repeated SerializedData extra_info = 1024;    // reserved infos
+}
+
+message FrameShuffle {
+  optional int32 version = 1;
+  optional int32 frame_id = 2;
+  optional CommonProto.Image img_frame = 4;
+  optional SensorProto.GPSFrame gps_frame = 13;
+
+  optional CommonProto.CameraMatrix camera = 17;
+  optional CANProto.CANFrame can_frames = 11;
+  repeated ObstacleResult vehiles = 9;
+  repeated CommonProto.Line lanes = 25;
+  optional WarningProto.FCW fcw = 24;
+  optional WarningProto.LDW ldw = 23;
+  repeated CANProto.CANFrameRaw can_frames_raw = 20;
+  optional SensorProto.IMUFrame imu_frame = 3;      // processed IMU information
+  repeated SensorProto.IMUFrame imu_frames_raw = 8; // raw IMU information
+  repeated SensorProto.GPSFrameRaw gps_frames_raw = 6;
+  repeated CommonProto.FreeSpaceResult freespace = 10;
+  optional FrameSource source = 7;
+  optional CommonProto.MotionFrame motion_frame = 18;     // vehicle motion
+  optional CommonProto.CameraParam camera_param = 19;
+  repeated ObstacleResult pedestrians = 5;
+  
+  repeated Box3DResult boxes_3d = 28;
+  repeated CommonProto.Skeleton skeletons = 29;
+  optional CommonProto.Image parsing_frame = 30;
+
+  // raw perception results
+  repeated CommonProto.ObstacleRaw vehicle_raw = 16;
+  repeated CommonProto.ObstacleRaw lane_raw = 15;
+  repeated CommonProto.ObstacleRaw pedestrians_raw = 14;
+  repeated CommonProto.ObstacleRaw obj_raw = 27;
+
+  repeated ObstacleResult traffic_signs = 1000;
+  repeated ObstacleResult traffic_lights = 1001;
+  optional CommonProto.HighwayLocate highway_locate = 1002;
+  
+  optional WarningProto.WarningResult warning_result = 21;
+  
+  optional CommonProto.OdometryFrame odometry = 22;
+  
+  optional CommonProto.CameraParam camera_param_default = 12;
+  
+  optional SensorProto.IMUFrame imu_offset = 36;
+  
+  repeated SerializedData extra_info = 101;    // reserved infos
+}
+
+// [END messages]

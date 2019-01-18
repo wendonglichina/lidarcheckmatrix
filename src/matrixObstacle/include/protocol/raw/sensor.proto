@@ -1,0 +1,112 @@
+// See README.txt for information and build instructions.
+//
+// Note: START and END tags are used in comments to define sections used in
+// tutorials.  They are not part of the syntax for Protocol Buffers.
+//
+// To get an in-depth walkthrough of this file and the related examples, see:
+// https://developers.google.com/protocol-buffers/docs/tutorials
+
+// [START declaration]
+syntax = "proto2";
+package SensorProto;
+// [END declaration]
+
+// [START messages]
+
+// IMU
+message IMUFrame {
+  optional float acc_x = 1;
+  optional float acc_y = 2;
+  optional float acc_z = 3;
+  optional float gyro_x = 4;
+  optional float gyro_y = 5;
+  optional float gyro_z = 6;
+  optional float temperature = 7;
+  required int64 time_stamp = 8;
+}
+
+message GPSFrame {
+  required float longitude = 1;
+  required float latitude = 2;
+  required int64 time_stamp = 3;
+  optional float longitude_cent = 4;
+  optional string longitude_dir = 5;  // values W or E
+  optional float latitude_cent = 6;
+  optional string latitude_dir = 7;  // values N or S
+  optional float ground_speed = 8;  // unit: knot
+  optional float ground_course = 9; // clockwise from North
+  optional int64 gps_time = 10;
+  optional float altitude = 11;
+  optional float accuracy = 12;
+}
+
+message GPSFrameRaw {
+  optional string info = 1;
+  required int64 time_stamp = 2;
+  optional GPSFrame parsed = 3;
+}
+
+message LidarBaseInfo {
+  optional string vendor_name = 1;
+  optional string model = 2;
+  optional string ip = 3;
+  optional string desc = 4;
+  optional int64 port = 5;
+  optional float  rpm = 6;
+  optional float  time_offset = 7;
+  optional float  repeat_delay = 8;
+  optional float  max_range = 9;
+  optional float  min_range = 10;
+  optional float  view_direction = 11;
+  optional float  view_width = 12;
+  optional float  min_angle = 13;
+  optional float  max_angle = 14;
+  optional float  packet_rate = 15;
+  optional float  pitch = 16;
+  optional float  yaw   = 17;
+  optional float  roll  = 18;
+  optional float  x_offset = 19;
+  optional float  y_offset = 20;
+  optional float  z_offset = 21;
+}
+
+message VelodyneLaserParam {
+  optional int32 id = 1;
+  optional float dist_correction = 2;
+  optional float dist_correction_x = 3;
+  optional float dist_correction_y = 4;
+  optional float focal_distance = 5;
+  optional float focal_slope = 6;
+  optional float horiz_offset_correction = 7;
+  optional float rot_correction = 8;
+  optional float vert_correction = 9;
+  optional float vert_offset_correction = 10;
+  optional float max_intensity = 11;
+  optional float min_intensity = 12;
+}
+
+message VelodyneLasers {
+  optional int32      num  = 1;
+  repeated VelodyneLaserParam param = 2;
+}
+
+message VelodyneParmas {
+  optional LidarBaseInfo base_info = 1;
+  optional VelodyneLasers lasers = 2;
+}
+
+message VelodyneFrame {
+  required int64 time_stamp  = 1;
+  optional VelodyneParmas parms = 2;
+}
+
+message RobosenseParmas {
+  optional LidarBaseInfo base_info = 1;
+  optional string server_ip = 2;
+}
+
+message RobosenseFrame {
+  required int64 time_stamp  = 1;
+  optional RobosenseParmas parms = 2;
+}
+// [END messages]

@@ -1,0 +1,24 @@
+Fount: 
+ x: 3.6
+ y: 0
+FtoR: 
+ x: 1.5
+ y: -1
+Right: 
+ x: 1.0
+ y: -1
+RtoB: 
+ x: -0.5
+ y: -1
+Back: 
+ x: -1
+ y: 0
+BtoL: 
+ x: -0.5
+ y: 1
+Left: 
+ x: 1
+ y: 1
+LtoF: 
+ x: 1.5
+ y: 1

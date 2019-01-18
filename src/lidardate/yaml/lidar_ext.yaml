@@ -1,0 +1,10 @@
+velodyne: 
+    to: "base"
+    pose:
+        x: 0.48
+        y: 0.03
+        z: 2.0
+    orientation:
+        roll: 0.0
+        pitch: 1.31
+        yaw: 1.26

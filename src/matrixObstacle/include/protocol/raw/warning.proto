@@ -1,0 +1,99 @@
+// See README.txt for information and build instructions.
+//
+// Note: START and END tags are used in comments to define sections used in
+// tutorials.  They are not part of the syntax for Protocol Buffers.
+//
+// To get an in-depth walkthrough of this file and the related examples, see:
+// https://developers.google.com/protocol-buffers/docs/tutorials
+
+// [START declaration]
+syntax = "proto2";
+package WarningProto;
+// [END declaration]
+
+// [START messages]
+
+// Forward Collision Warning, old style warning info
+message FCW {
+  enum FCWType {
+	FCW_NONE = 0;
+	FCW_TTC = 1;
+	FCW_HMW_LEVEL1 = 2;
+	FCW_HMW_LEVEL2 = 4;
+  }
+  // time to collision
+  optional float ttc = 1;
+  optional float hmw = 2;
+  // if trigger warning at current image frame
+  optional bool warning = 3;
+  optional FCWType warning_type = 4;
+}
+
+// Lane Departure Warning, old style warning info
+message LDW {
+  enum LDWType {
+    LDW_NONE = 0;
+    LDW_LEFT = 1;
+    LDW_RIGHT = 2;
+  }
+  optional LDWType type = 1;
+  // if trigger warning at current image frame
+  optional bool warning = 2;
+}
+
+// warning policy
+message WarningResult {
+  enum WarningLevel{
+    WarningLevel_None = 0;
+    WarningLevel_Warning = 1;
+    WarningLevel_Impact = 2;
+    WarningLevel_Notice = 1024;
+  }
+  enum LDWType {
+    LDWType_None = 0;
+    LDWType_Left = 1;
+    LDWType_Right = 2;
+  }
+  enum WarningType {
+    WarningType_None = 0;
+    WarningType_FCW  = 1;
+    WarningType_HMW  = 2;
+    WarningType_UFCW = 4;
+    WarningType_LDW  = 8;
+    WarningType_PCW  = 16;
+  }
+  message FCW{
+    optional int32 veh_id = 1;
+    optional int32 level = 2;
+    optional float ttc = 3;
+  }
+  message HMW{
+    optional int32 veh_id = 1;
+    optional int32 level = 2;
+    optional float hmw = 3;
+  }
+  message UFCW{
+    optional int32 veh_id = 1;
+    optional int32 level = 2;
+    optional float dist = 3;
+  }
+  message PCW{
+    optional int32 ped_id = 1;
+    optional int32 level = 2;
+    optional float dist = 3;
+  }
+  message LDW{
+    optional int32 line_id = 1;
+    optional int32 level = 2;
+    optional int32 ldw_type = 3;
+  }
+
+  optional FCW fcw = 1;
+  optional HMW hmw = 2;
+  optional UFCW ufcw = 3;
+  optional PCW pcw = 4;
+  optional LDW ldw = 5;
+  optional int32 warn_type = 6;
+}
+
+// [END messages]
