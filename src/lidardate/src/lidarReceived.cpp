@@ -144,7 +144,6 @@ void getLidarClound::Distance_label()
 		//x2 = x1 * cos(alpha) + y1 * sin(alpha);
 		//y2 = -x1 * sin(alpha) + y1 * cos(alpha);
 		point1.x = i*0.01*cos(angle) + line_width_*sin(angle) + camera_point[0];
-		std::cout<<"aaaaaaaaaaaaaaaaa"<<point1.x<<std::endl;
 		point1.y = -0.01*i*sin(angle) + line_width_*cos(angle) + camera_point[1];
 		cloud->push_back(point1);
 		point1.x = i*0.01*cos(angle) - line_width_*sin(angle) + camera_point[0];
